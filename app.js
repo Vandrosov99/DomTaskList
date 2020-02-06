@@ -9,15 +9,70 @@ const taskInput = document.querySelector('#task')
 
 loadEventListeners();
 
+function removeTaskFromLocalStorage(taskItem) {
+    console.log('asdasd')
+    let tasks;
+    if (localStorage.getItem('tasks') === null) {
+        tasks = [];
+    } else {
+        tasks = JSON.parse(localStorage.getItem('tasks'))
+    }
+    tasks.forEach(function (task, index) {
+        if (taskItem.textContent = task) {
+            tasks.splice(index, 1) // видалить 1 елемент по индксу шо зустрине
+        }
+    })
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+}
 
+function storeInLocalStorage(task) {
+    let tasks;
+    if (localStorage.getItem('tasks') === null) {
+        tasks = [];
+    } else {
+        tasks = JSON.parse(localStorage.getItem('tasks'))
+    }
+    tasks.push(task)
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+
+}
+
+function getTasks(task) {
+    let tasks;
+    if (localStorage.getItem('tasks') === null) {
+        tasks = [];
+    } else {
+        tasks = JSON.parse(localStorage.getItem('tasks'))
+    }
+    tasks.forEach(function (task) {
+        const li = document.createElement('li');
+        //add class
+        li.className = 'collection-item'
+        //create text node and append
+
+        li.appendChild(document.createTextNode(task))
+        // console.log(taskInput.value)
+        //create krestik link
+        const link = document.createElement('a');
+        //add classname
+        link.className = 'delete-item secondary-content'
+        //add icon html
+        link.innerHTML = '<i class = "fa fa-remove"></i>'
+        li.appendChild(link)
+        //append li to ul
+        tasklist.appendChild(li)
+
+    })
+}
 
 function loadEventListeners() {
     //  наші події 
-
+    document.addEventListener('DOMContentLoaded', getTasks)
     form.addEventListener('submit', function (e) {
 
         if (taskInput.value === '') {
             alert("write some task");
+            // break;
         }
         //create element
         const li = document.createElement('li');
@@ -37,7 +92,13 @@ function loadEventListeners() {
         //append li to ul
         tasklist.appendChild(li)
 
+        e.preventDefault();
+
+        // сохраняем в локальное хранилище 
+        storeInLocalStorage(taskInput.value);
+
         taskInput.value = '';
+
 
         e.preventDefault();
     });
@@ -48,8 +109,8 @@ function loadEventListeners() {
         if (e.target.parentElement.classList.contains('delete-item')) {
 
             e.target.parentElement.parentElement.remove();
-
         }
+        removeTaskFromLocalStorage(e.target.parentElement.parentElement);
 
     });
     // удаление ттпа очередь первого добавил первого и удалил
